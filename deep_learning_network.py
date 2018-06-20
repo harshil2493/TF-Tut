@@ -48,7 +48,10 @@ Training NN
 """
 
 
-def train_neural_network(train_x, train_y, test_x, test_y, batch_size=1000):
+def train_neural_network(train_x, train_y, test_x, test_y,
+                         batch_size=1000,
+                         # cycle forward backward
+                         hm_epochs=10):
     features = len(train_x[0])
     n_classes = len(train_y[0])
 
@@ -62,9 +65,6 @@ def train_neural_network(train_x, train_y, test_x, test_y, batch_size=1000):
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
 
     optimizer = tf.train.AdamOptimizer().minimize(cost)
-
-    # cycle forward backward
-    hm_epochs = 10
 
     with tf.Session() as sess:
         sess.run(tf.initialize_all_variables())
@@ -81,7 +81,6 @@ def train_neural_network(train_x, train_y, test_x, test_y, batch_size=1000):
                 epoch_y = train_y[start:end]
                 o, c = sess.run([optimizer, cost], feed_dict={x: epoch_x, y: epoch_y})
                 epoch_loss += c
-
                 i += batch_size
 
             print("Epoch: ", epoch, " Loss: ", epoch_loss)
